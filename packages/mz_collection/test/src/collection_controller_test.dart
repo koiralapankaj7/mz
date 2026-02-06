@@ -2961,7 +2961,7 @@ void main() {
         token: EmptyToken(),
         limit: 20,
         filters: [
-          FilterCriteria(id: 'status', values: {'active'})
+          FilterCriteria(id: 'status', values: {'active'}),
         ],
       );
       final params = request.toQueryParams();
@@ -3000,7 +3000,7 @@ void main() {
         limit: 20,
         search: 'test',
         filters: [
-          FilterCriteria(id: 'a', values: {'1'})
+          FilterCriteria(id: 'a', values: {'1'}),
         ],
         sort: [SortCriteria(id: 'name', order: SortOrder.ascending)],
         group: GroupCriteria(id: 'cat'),
@@ -3011,7 +3011,7 @@ void main() {
         limit: 20,
         search: 'test',
         filters: [
-          FilterCriteria(id: 'a', values: {'1'})
+          FilterCriteria(id: 'a', values: {'1'}),
         ],
         sort: [SortCriteria(id: 'name', order: SortOrder.ascending)],
         group: GroupCriteria(id: 'cat'),
@@ -3089,7 +3089,7 @@ void main() {
         token: EmptyToken(),
         limit: 20,
         filters: [
-          FilterCriteria(id: 'a', values: {'1'})
+          FilterCriteria(id: 'a', values: {'1'}),
         ],
       );
       const request2 = PageRequest(
@@ -3097,7 +3097,7 @@ void main() {
         token: EmptyToken(),
         limit: 20,
         filters: [
-          FilterCriteria(id: 'a', values: {'2'})
+          FilterCriteria(id: 'a', values: {'2'}),
         ],
       );
 
@@ -3132,7 +3132,7 @@ void main() {
         token: EmptyToken(),
         limit: 20,
         filters: [
-          FilterCriteria(id: 'a', values: {'1'})
+          FilterCriteria(id: 'a', values: {'1'}),
         ],
       );
 
@@ -3161,7 +3161,7 @@ void main() {
         token: EmptyToken(),
         limit: 20,
         filters: [
-          FilterCriteria(id: 'a', values: {'1'})
+          FilterCriteria(id: 'a', values: {'1'}),
         ],
       );
       const request2 = PageRequest(
