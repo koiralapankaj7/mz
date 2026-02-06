@@ -20,7 +20,7 @@ jobs:
       mz_collection: ${{ steps.filter.outputs.mz_collection }}
       mz_lints: ${{ steps.filter.outputs.mz_lints }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Required for paths-filter to compare commits
 
@@ -45,7 +45,7 @@ jobs:
     if: needs.changes.outputs.mz_core == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -72,7 +72,7 @@ jobs:
     if: needs.changes.outputs.mz_core == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -92,7 +92,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: packages/mz_core/coverage/lcov.info
           flags: mz_core
@@ -106,7 +106,7 @@ jobs:
     if: needs.changes.outputs.mz_collection == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
@@ -131,7 +131,7 @@ jobs:
     if: needs.changes.outputs.mz_collection == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
@@ -150,7 +150,7 @@ jobs:
           dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: packages/mz_collection/coverage/lcov.info
           flags: mz_collection
@@ -164,7 +164,7 @@ jobs:
     if: needs.changes.outputs.mz_lints == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
@@ -189,7 +189,7 @@ jobs:
     if: needs.changes.outputs.mz_lints == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
