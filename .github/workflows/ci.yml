@@ -113,7 +113,7 @@ jobs:
 
       - name: Get dependencies
         working-directory: packages/mz_collection
-        run: dart pub get
+        run: dart pub get --no-example
 
       - name: Analyze
         working-directory: packages/mz_collection
@@ -138,7 +138,7 @@ jobs:
 
       - name: Get dependencies
         working-directory: packages/mz_collection
-        run: dart pub get
+        run: dart pub get --no-example
 
       - name: Run Tests with Coverage
         working-directory: packages/mz_collection
