@@ -92,7 +92,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: packages/mz_core/coverage/lcov.info
           flags: mz_core
@@ -150,7 +150,7 @@ jobs:
           dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: packages/mz_collection/coverage/lcov.info
           flags: mz_collection
