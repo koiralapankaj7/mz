@@ -16,8 +16,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  mz_lints:
-    path: ../../mz_lints
+  # mz_lints is available for local development but not in workspace
+  # mz_lints:
+  #   path: ../../mz_lints
 
 flutter:
   uses-material-design: true
