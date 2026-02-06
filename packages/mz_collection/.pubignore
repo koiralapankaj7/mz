@@ -1,0 +1,7 @@
+# Development and planning files
+plan.md
+todo.md
+architecture.md
+
+# Test benchmarks (not needed for package users)
+test/benchmark/
