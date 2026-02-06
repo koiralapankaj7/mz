@@ -1659,8 +1659,7 @@ void main() {
 
     group('equality', () {
       test('identical snapshots are equal', () {
-        final snapshot =
-            PaginationSnapshot.fromOffsets(const {'trailing': 20});
+        final snapshot = PaginationSnapshot.fromOffsets(const {'trailing': 20});
         expect(snapshot == snapshot, isTrue);
       });
 
@@ -1692,8 +1691,7 @@ void main() {
       });
 
       test('toString returns descriptive string', () {
-        final snapshot =
-            PaginationSnapshot.fromOffsets(const {'trailing': 20});
+        final snapshot = PaginationSnapshot.fromOffsets(const {'trailing': 20});
         final str = snapshot.toString();
 
         expect(str, contains('PaginationSnapshot'));
