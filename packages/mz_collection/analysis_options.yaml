@@ -1,6 +1,9 @@
 include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
+  exclude:
+    # Example is a Flutter app; excluded since CI uses Dart-only setup
+    - example/**
   errors:
     # Tests may use deprecated internal APIs intentionally
     deprecated_member_use_from_same_package: ignore

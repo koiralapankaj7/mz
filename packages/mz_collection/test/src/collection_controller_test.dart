@@ -1316,8 +1316,6 @@ void main() {
     });
   });
 
-
-
   group('CollectionController large dataset sorting', () {
     late SortManager<TestItem> sort;
     late CollectionController<TestItem> controller;
@@ -2962,7 +2960,9 @@ void main() {
         edge: PaginationEdge.trailing,
         token: EmptyToken(),
         limit: 20,
-        filters: [FilterCriteria(id: 'status', values: {'active'})],
+        filters: [
+          FilterCriteria(id: 'status', values: {'active'}),
+        ],
       );
       final params = request.toQueryParams();
 
@@ -2999,7 +2999,9 @@ void main() {
         token: OffsetToken(10),
         limit: 20,
         search: 'test',
-        filters: [FilterCriteria(id: 'a', values: {'1'})],
+        filters: [
+          FilterCriteria(id: 'a', values: {'1'}),
+        ],
         sort: [SortCriteria(id: 'name', order: SortOrder.ascending)],
         group: GroupCriteria(id: 'cat'),
       );
@@ -3008,7 +3010,9 @@ void main() {
         token: OffsetToken(10),
         limit: 20,
         search: 'test',
-        filters: [FilterCriteria(id: 'a', values: {'1'})],
+        filters: [
+          FilterCriteria(id: 'a', values: {'1'}),
+        ],
         sort: [SortCriteria(id: 'name', order: SortOrder.ascending)],
         group: GroupCriteria(id: 'cat'),
       );
@@ -3084,13 +3088,17 @@ void main() {
         edge: PaginationEdge.trailing,
         token: EmptyToken(),
         limit: 20,
-        filters: [FilterCriteria(id: 'a', values: {'1'})],
+        filters: [
+          FilterCriteria(id: 'a', values: {'1'}),
+        ],
       );
       const request2 = PageRequest(
         edge: PaginationEdge.trailing,
         token: EmptyToken(),
         limit: 20,
-        filters: [FilterCriteria(id: 'a', values: {'2'})],
+        filters: [
+          FilterCriteria(id: 'a', values: {'2'}),
+        ],
       );
 
       expect(request1, isNot(equals(request2)));
@@ -3123,7 +3131,9 @@ void main() {
         edge: PaginationEdge.trailing,
         token: EmptyToken(),
         limit: 20,
-        filters: [FilterCriteria(id: 'a', values: {'1'})],
+        filters: [
+          FilterCriteria(id: 'a', values: {'1'}),
+        ],
       );
 
       expect(request1, isNot(equals(request2)));
@@ -3150,7 +3160,9 @@ void main() {
         edge: PaginationEdge.trailing,
         token: EmptyToken(),
         limit: 20,
-        filters: [FilterCriteria(id: 'a', values: {'1'})],
+        filters: [
+          FilterCriteria(id: 'a', values: {'1'}),
+        ],
       );
       const request2 = PageRequest(
         edge: PaginationEdge.trailing,
