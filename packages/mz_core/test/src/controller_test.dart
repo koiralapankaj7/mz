@@ -1033,7 +1033,7 @@ void main() {
         TestController? found;
 
         await tester.pumpWidget(
-          ControllerProvider<TestController>(
+          ControllerProvider.autoDispose<TestController>(
             create: (_) => TestController(),
             child: Builder(
               builder: (context) {
@@ -1051,7 +1051,7 @@ void main() {
       testWidgets('should handle maybe lookup', (tester) async {
         TestController? found;
         await tester.pumpWidget(
-          ControllerProvider<TestController>(
+          ControllerProvider.autoDispose<TestController>(
             create: (_) => TestController(),
             child: Builder(
               builder: (context) {
@@ -1109,7 +1109,7 @@ void main() {
         TestController? found;
 
         await tester.pumpWidget(
-          ControllerProvider<TestController>(
+          ControllerProvider.autoDispose<TestController>(
             create: (_) => TestController(),
             child: Builder(
               builder: (context) {
@@ -1160,7 +1160,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            home: ControllerProvider<TestController>(
+            home: ControllerProvider.autoDispose<TestController>(
               key: key,
               create: (_) => TestController(),
               child: Column(
@@ -1196,7 +1196,7 @@ void main() {
         // Trigger a rebuild by updating the widget tree
         await tester.pumpWidget(
           MaterialApp(
-            home: ControllerProvider<TestController>(
+            home: ControllerProvider.autoDispose<TestController>(
               key: key,
               create: (_) => TestController(),
               child: Column(
@@ -1231,6 +1231,83 @@ void main() {
         expect(listenFalseBuildCount, 2);
         expect(listenTrueBuildCount, 2);
       });
+
+      testWidgets(
+          'should NOT dispose controller when using default constructor',
+          (tester) async {
+        final controller = TestController();
+
+        await tester.pumpWidget(
+          ControllerProvider<TestController>(
+            controller: controller,
+            child: const SizedBox(),
+          ),
+        );
+
+        // Remove the provider from the tree
+        await tester.pumpWidget(const SizedBox());
+
+        // Controller should NOT be disposed since we used the default
+        // constructor (no lifecycle management)
+        expect(controller.isDisposed, isFalse);
+
+        // Clean up manually
+        controller.dispose();
+      });
+
+      testWidgets(
+          'should dispose controller when using autoDispose constructor',
+          (tester) async {
+        TestController? createdController;
+
+        await tester.pumpWidget(
+          ControllerProvider.autoDispose<TestController>(
+            create: (_) {
+              createdController = TestController();
+              return createdController!;
+            },
+            child: const SizedBox(),
+          ),
+        );
+
+        expect(createdController, isNotNull);
+        expect(createdController!.isDisposed, isFalse);
+
+        // Remove the provider from the tree
+        await tester.pumpWidget(const SizedBox());
+
+        // Controller SHOULD be disposed since we used autoDispose
+        expect(createdController!.isDisposed, isTrue);
+      });
+
+      testWidgets('should provide externally owned controller without disposal',
+          (tester) async {
+        final controller = TestController();
+        TestController? found;
+
+        await tester.pumpWidget(
+          ControllerProvider<TestController>(
+            controller: controller,
+            child: Builder(
+              builder: (context) {
+                found = Controller.ofType<TestController>(context);
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(found, same(controller));
+
+        // Remove provider
+        await tester.pumpWidget(const SizedBox());
+
+        // Controller should still be usable (not disposed)
+        expect(controller.isDisposed, isFalse);
+        controller
+          ..notify() // Should not throw
+          ..dispose();
+      });
     });
 
     group('ControllerBuilder -', () {
@@ -1244,7 +1321,7 @@ void main() {
           MaterialApp(
             home: ControllerBuilder<TestController>(
               controller: controller,
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('test');
               },
@@ -1273,7 +1350,7 @@ void main() {
             home: ControllerBuilder<TestController>(
               controller: controller,
               filterKey: 'specificKey',
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('test');
               },
@@ -1307,7 +1384,7 @@ void main() {
             home: ControllerBuilder<TestController>(
               controller: controller,
               predicate: (key, value) => value is int && value > 10,
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('test');
               },
@@ -1429,7 +1506,7 @@ void main() {
           MaterialApp(
             home: ControllerBuilder<TestController>(
               controller: controller1,
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('Test');
               },
@@ -1444,7 +1521,7 @@ void main() {
           MaterialApp(
             home: ControllerBuilder<TestController>(
               controller: controller2,
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('Test');
               },
@@ -1479,7 +1556,7 @@ void main() {
             home: ControllerBuilder<TestController>(
               controller: controller,
               filterKey: 'key1',
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('Test');
               },
@@ -1495,7 +1572,7 @@ void main() {
             home: ControllerBuilder<TestController>(
               controller: controller,
               filterKey: 'key2',
-              builder: (context, ctrl) {
+              builder: (context) {
                 buildCount++;
                 return const Text('Test');
               },
@@ -1529,7 +1606,7 @@ void main() {
             home: Builder(
               builder: (context) {
                 return ControllerProvider<TestController>(
-                  create: (context) => controller1,
+                  controller: controller1,
                   child: Builder(
                     builder: (context) {
                       final ctrl = Controller.ofType<TestController>(context);
@@ -1550,7 +1627,7 @@ void main() {
             home: Builder(
               builder: (context) {
                 return ControllerProvider<TestController>(
-                  create: (context) => controller2,
+                  controller: controller2,
                   child: Builder(
                     builder: (context) {
                       final ctrl = Controller.ofType<TestController>(context);
@@ -1654,7 +1731,7 @@ void main() {
                   predicate: usePredicate1
                       ? (k, v) => v is int && v > 5
                       : (k, v) => v is int && v > 10,
-                  builder: (ctx, ctrl) {
+                  builder: (ctx) {
                     buildCount++;
                     return ElevatedButton(
                       onPressed: () {

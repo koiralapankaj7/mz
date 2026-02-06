@@ -187,7 +187,7 @@ class _ThrottleDemo extends StatelessWidget {
             const SizedBox(height: 16),
             ControllerBuilder<_ThrottleCounter>(
               controller: controller,
-              builder: (context, ctrl) {
+              builder: (context) {
                 return Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -201,12 +201,12 @@ class _ThrottleDemo extends StatelessWidget {
                         children: [
                           _Counter(
                             label: 'Clicks',
-                            count: ctrl.clickCount,
+                            count: controller.clickCount,
                             color: Colors.blue,
                           ),
                           _Counter(
                             label: 'Executions',
-                            count: ctrl.executionCount,
+                            count: controller.executionCount,
                             color: Colors.green,
                           ),
                         ],

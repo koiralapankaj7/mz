@@ -341,8 +341,8 @@ class _PriorityDemoState extends State<_PriorityDemo> {
             const SizedBox(height: 16),
             ControllerBuilder<PriorityController>(
               controller: widget.controller,
-              builder: (context, ctrl) {
-                if (ctrl.log.isEmpty) {
+              builder: (context) {
+                if (widget.controller.log.isEmpty) {
                   return const Text(
                     'Click button to see priority order',
                     textAlign: TextAlign.center,
@@ -357,7 +357,7 @@ class _PriorityDemoState extends State<_PriorityDemo> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    ...ctrl.log.asMap().entries.map(
+                    ...widget.controller.log.asMap().entries.map(
                       (entry) => Padding(
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text('${entry.key + 1}. ${entry.value}'),
