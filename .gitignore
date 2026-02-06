@@ -60,5 +60,6 @@ coverage/
 **/example/windows/
 **/example/web/
 
-# Pubspec lock at package level (use root lockfile)
-# packages/*/pubspec.lock
+# Pubspec lock for library packages (not committed per Dart guidelines)
+packages/*/pubspec.lock
+packages/*/example/pubspec.lock

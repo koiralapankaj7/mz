@@ -1,0 +1,79 @@
+# Automatic PR labeling configuration
+
+# Package-specific labels
+'pkg:mz_core':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'packages/mz_core/**/*'
+
+'pkg:mz_collection':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'packages/mz_collection/**/*'
+
+'pkg:mz_lints':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'packages/mz_lints/**/*'
+
+# Content type labels
+'documentation':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'README.md'
+      - '**/README.md'
+      - 'doc/**/*'
+      - '**/doc/**/*'
+      - '**/*.md'
+
+'dependencies':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'pubspec.yaml'
+      - '**/pubspec.yaml'
+
+'tests':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/test/**/*'
+      - '**/*_test.dart'
+
+'example':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/example/**/*'
+
+'ci/cd':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**/*'
+
+# Feature labels (mz_core specific)
+'controller':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/controller*.dart'
+
+'logger':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/simple_logger*.dart'
+      - '**/logger*.dart'
+
+'extensions':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/extensions*.dart'
+
+# Branch-based labels
+'breaking-change':
+  - head-branch: ['^breaking', 'major']
+
+'enhancement':
+  - head-branch: ['^feat', '^feature', 'enhancement']
+
+'bug':
+  - head-branch: ['^fix', '^bugfix', 'bug']
+
+'refactor':
+  - head-branch: ['^refactor']

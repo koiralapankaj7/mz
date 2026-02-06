@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "mz_core-v*"
+      - "mz_collection-v*"
       - "mz_lints-v*"
 
 jobs:
@@ -31,11 +32,11 @@ jobs:
       - name: Extract package name from tag
         id: extract
         run: |
-          TAG=${GITHUB_REF#refs/tags/}
-          PACKAGE_NAME=$(echo $TAG | sed 's/-v.*//')
-          VERSION=$(echo $TAG | sed 's/.*-v//')
-          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          TAG="${GITHUB_REF#refs/tags/}"
+          PACKAGE_NAME="${TAG%%-v*}"
+          VERSION="${TAG##*-v}"
+          echo "package_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Publishing $PACKAGE_NAME version $VERSION"
 
       - name: Publish ${{ steps.extract.outputs.package_name }}

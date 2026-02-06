@@ -1,0 +1,121 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  changelog:
+    name: Check Changelog Updated
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if CHANGELOG.md was updated
+        run: |
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          
+          # Check which packages were modified
+          MZ_CORE_CHANGED=$(echo "$CHANGED_FILES" | grep -q "^packages/mz_core/" && echo "true" || echo "false")
+          MZ_COLLECTION_CHANGED=$(echo "$CHANGED_FILES" | grep -q "^packages/mz_collection/" && echo "true" || echo "false")
+          MZ_LINTS_CHANGED=$(echo "$CHANGED_FILES" | grep -q "^packages/mz_lints/" && echo "true" || echo "false")
+          
+          WARNINGS=0
+          
+          # Check mz_core changelog
+          if [ "$MZ_CORE_CHANGED" = "true" ]; then
+            if echo "$CHANGED_FILES" | grep -q "packages/mz_core/CHANGELOG.md"; then
+              echo "mz_core: CHANGELOG.md has been updated"
+            else
+              echo "mz_core: CHANGELOG.md should be updated for significant changes"
+              WARNINGS=$((WARNINGS + 1))
+            fi
+          fi
+          
+          # Check mz_collection changelog
+          if [ "$MZ_COLLECTION_CHANGED" = "true" ]; then
+            if echo "$CHANGED_FILES" | grep -q "packages/mz_collection/CHANGELOG.md"; then
+              echo "mz_collection: CHANGELOG.md has been updated"
+            else
+              echo "mz_collection: CHANGELOG.md should be updated for significant changes"
+              WARNINGS=$((WARNINGS + 1))
+            fi
+          fi
+          
+          # Check mz_lints changelog
+          if [ "$MZ_LINTS_CHANGED" = "true" ]; then
+            if echo "$CHANGED_FILES" | grep -q "packages/mz_lints/CHANGELOG.md"; then
+              echo "mz_lints: CHANGELOG.md has been updated"
+            else
+              echo "mz_lints: CHANGELOG.md should be updated for significant changes"
+              WARNINGS=$((WARNINGS + 1))
+            fi
+          fi
+          
+          if [ $WARNINGS -gt 0 ]; then
+            echo ""
+            echo "If this is a minor change, you can ignore these warnings"
+          else
+            echo "All relevant CHANGELOGs are up to date or no package changes detected"
+          fi
+
+  labeler:
+    name: PR Labeler
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Label PR
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  size:
+    name: Check PR Size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        run: |
+          LINES_CHANGED=$(git diff --shortstat origin/main...HEAD | grep -oE '[0-9]+ insertions|[0-9]+ deletions' | grep -oE '[0-9]+' | awk '{s+=$1} END {print s}')
+          LINES_CHANGED=${LINES_CHANGED:-0}
+          echo "Lines changed: $LINES_CHANGED"
+          if [ "$LINES_CHANGED" -gt 500 ]; then
+            echo "This PR is quite large ($LINES_CHANGED lines). Consider splitting it into smaller PRs."
+          else
+            echo "PR size is reasonable"
+          fi
+
+  lint-commit-messages:
+    name: Lint Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install commitlint
+        run: |
+          npm install --save-dev @commitlint/{config-conventional,cli}
+
+      - name: Validate commit messages
+        run: |
+          npx commitlint --from=origin/main --to=HEAD --verbose || true

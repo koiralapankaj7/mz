@@ -11,8 +11,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  analyze:
-    name: Analyze
+  # Detect which packages have changes
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      mz_core: ${{ steps.filter.outputs.mz_core }}
+      mz_collection: ${{ steps.filter.outputs.mz_collection }}
+      mz_lints: ${{ steps.filter.outputs.mz_lints }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for paths-filter to compare commits
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # For push events, compare with the previous commit
+          # For PR events, compare with the base branch
+          base: ${{ github.event_name == 'push' && github.event.before || '' }}
+          filters: |
+            mz_core:
+              - 'packages/mz_core/**'
+            mz_collection:
+              - 'packages/mz_collection/**'
+            mz_lints:
+              - 'packages/mz_lints/**'
+
+  # mz_core jobs
+  analyze-mz-core:
+    name: Analyze mz_core
+    needs: changes
+    if: needs.changes.outputs.mz_core == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,37 +60,16 @@ jobs:
       - name: Bootstrap
         run: melos bootstrap
 
-      - name: Analyze workspace packages
+      - name: Analyze
         run: melos run analyze
 
       - name: Check Formatting
         run: melos run format
 
-  analyze-lints:
-    name: Analyze mz_lints
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: "stable"
-
-      - name: Get dependencies
-        working-directory: packages/mz_lints
-        run: dart pub get
-
-      - name: Analyze
-        working-directory: packages/mz_lints
-        run: dart analyze --fatal-infos
-
-      - name: Check Formatting
-        working-directory: packages/mz_lints
-        run: dart format --set-exit-if-changed .
-
   test-mz-core:
     name: Test mz_core
+    needs: changes
+    if: needs.changes.outputs.mz_core == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -90,27 +99,11 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
-  test-mz-lints:
-    name: Test mz_lints
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: "stable"
-
-      - name: Get dependencies
-        working-directory: packages/mz_lints
-        run: dart pub get
-
-      - name: Run Tests
-        working-directory: packages/mz_lints
-        run: dart test
-
-  analyze-collection:
+  # mz_collection jobs
+  analyze-mz-collection:
     name: Analyze mz_collection
+    needs: changes
+    if: needs.changes.outputs.mz_collection == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -134,6 +127,8 @@ jobs:
 
   test-mz-collection:
     name: Test mz_collection
+    needs: changes
+    if: needs.changes.outputs.mz_collection == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -147,9 +142,12 @@ jobs:
         working-directory: packages/mz_collection
         run: dart pub get
 
-      - name: Run Tests
+      - name: Run Tests with Coverage
         working-directory: packages/mz_collection
-        run: dart test
+        run: |
+          dart pub global activate coverage
+          dart test --coverage=coverage
+          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -158,3 +156,114 @@ jobs:
           flags: mz_collection
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
+
+  # mz_lints jobs
+  analyze-mz-lints:
+    name: Analyze mz_lints
+    needs: changes
+    if: needs.changes.outputs.mz_lints == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Get dependencies
+        working-directory: packages/mz_lints
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: packages/mz_lints
+        run: dart analyze --fatal-infos
+
+      - name: Check Formatting
+        working-directory: packages/mz_lints
+        run: dart format --set-exit-if-changed .
+
+  test-mz-lints:
+    name: Test mz_lints
+    needs: changes
+    if: needs.changes.outputs.mz_lints == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Get dependencies
+        working-directory: packages/mz_lints
+        run: dart pub get
+
+      - name: Run Tests
+        working-directory: packages/mz_lints
+        run: dart test
+
+  # Summary job - this is the only required check for branch protection
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - changes
+      - analyze-mz-core
+      - test-mz-core
+      - analyze-mz-collection
+      - test-mz-collection
+      - analyze-mz-lints
+      - test-mz-lints
+    steps:
+      - name: Check CI status
+        run: |
+          echo "Checking CI results..."
+          
+          # Helper function to check job result
+          check_job() {
+            local name=$1
+            local result=$2
+            local required=$3
+            
+            if [ "$result" = "success" ]; then
+              echo "✅ $name: passed"
+              return 0
+            elif [ "$result" = "skipped" ] && [ "$required" = "false" ]; then
+              echo "⏭️  $name: skipped (no changes)"
+              return 0
+            elif [ "$result" = "failure" ]; then
+              echo "❌ $name: failed"
+              return 1
+            elif [ "$result" = "cancelled" ]; then
+              echo "⚠️  $name: cancelled"
+              return 1
+            else
+              echo "❓ $name: $result"
+              return 0
+            fi
+          }
+          
+          FAILED=0
+          
+          # changes job is always required
+          check_job "Detect Changes" "${{ needs.changes.result }}" "true" || FAILED=1
+          
+          # Package jobs are optional (may be skipped if no changes)
+          check_job "Analyze mz_core" "${{ needs.analyze-mz-core.result }}" "false" || FAILED=1
+          check_job "Test mz_core" "${{ needs.test-mz-core.result }}" "false" || FAILED=1
+          check_job "Analyze mz_collection" "${{ needs.analyze-mz-collection.result }}" "false" || FAILED=1
+          check_job "Test mz_collection" "${{ needs.test-mz-collection.result }}" "false" || FAILED=1
+          check_job "Analyze mz_lints" "${{ needs.analyze-mz-lints.result }}" "false" || FAILED=1
+          check_job "Test mz_lints" "${{ needs.test-mz-lints.result }}" "false" || FAILED=1
+          
+          echo ""
+          if [ $FAILED -eq 0 ]; then
+            echo "🎉 All CI checks passed!"
+            exit 0
+          else
+            echo "💥 Some CI checks failed!"
+            exit 1
+          fi

@@ -1,0 +1,77 @@
+version: 2
+updates:
+  # mz_core package
+  - package-ecosystem: "pub"
+    directory: "/packages/mz_core"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "pkg:mz_core"
+      - "automated"
+    commit-message:
+      prefix: "chore(mz_core)"
+      include: "scope"
+
+  # mz_core example app
+  - package-ecosystem: "pub"
+    directory: "/packages/mz_core/example"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "pkg:mz_core"
+      - "example"
+      - "automated"
+    commit-message:
+      prefix: "chore(mz_core)"
+      include: "scope"
+
+  # mz_collection package
+  - package-ecosystem: "pub"
+    directory: "/packages/mz_collection"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "pkg:mz_collection"
+      - "automated"
+    commit-message:
+      prefix: "chore(mz_collection)"
+      include: "scope"
+
+  # mz_lints package
+  - package-ecosystem: "pub"
+    directory: "/packages/mz_lints"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "pkg:mz_lints"
+      - "automated"
+    commit-message:
+      prefix: "chore(mz_lints)"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "ci/cd"
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
