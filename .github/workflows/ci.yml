@@ -108,3 +108,53 @@ jobs:
       - name: Run Tests
         working-directory: packages/mz_lints
         run: dart test
+
+  analyze-collection:
+    name: Analyze mz_collection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Get dependencies
+        working-directory: packages/mz_collection
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: packages/mz_collection
+        run: dart analyze --fatal-infos
+
+      - name: Check Formatting
+        working-directory: packages/mz_collection
+        run: dart format --set-exit-if-changed .
+
+  test-mz-collection:
+    name: Test mz_collection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Get dependencies
+        working-directory: packages/mz_collection
+        run: dart pub get
+
+      - name: Run Tests
+        working-directory: packages/mz_collection
+        run: dart test
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: packages/mz_collection/coverage/lcov.info
+          flags: mz_collection
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false

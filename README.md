@@ -10,6 +10,7 @@ A monorepo containing production-ready Flutter and Dart packages.
 | Package | Description | pub.dev |
 |---------|-------------|---------|
 | [mz_core](packages/mz_core) | Flutter utilities for state management, logging, collections, and rate limiting | [![pub package](https://img.shields.io/pub/v/mz_core.svg)](https://pub.dev/packages/mz_core) |
+| [mz_collection](packages/mz_collection) | Pure Dart collection state management with filtering, sorting, grouping, and more | [![pub package](https://img.shields.io/pub/v/mz_collection.svg)](https://pub.dev/packages/mz_collection) |
 | [mz_lints](packages/mz_lints) | Custom Dart lint rules for Flutter apps | [![pub package](https://img.shields.io/pub/v/mz_lints.svg)](https://pub.dev/packages/mz_lints) |
 
 ## Getting Started

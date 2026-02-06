@@ -1,0 +1,19 @@
+name: mz_collection
+description: >-
+  Pure Dart collection state management for handling lists, grids, tables,
+  trees and more. Includes filtering, sorting, grouping, selection, pagination,
+  aggregation, and fuzzy search.
+version: 0.0.1
+repository: https://github.com/koiralapankaj7/mz/tree/main/packages/mz_collection
+issue_tracker: https://github.com/koiralapankaj7/mz/issues
+# Note: Not in workspace - pure Dart package managed separately
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  meta: ^1.12.0
+
+dev_dependencies:
+  test: ^1.25.0
+  very_good_analysis: ^10.0.0

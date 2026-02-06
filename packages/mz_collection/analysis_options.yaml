@@ -1,0 +1,14 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    # Tests may use deprecated internal APIs intentionally
+    deprecated_member_use_from_same_package: ignore
+
+linter:
+  rules:
+    always_use_package_imports: false
+    # Test files prioritize readability over cascade style
+    cascade_invocations: false
+    # Tests benefit from explicit argument values as documentation
+    avoid_redundant_argument_values: false

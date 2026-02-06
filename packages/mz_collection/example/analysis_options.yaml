@@ -1,0 +1,7 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Extends RegExp which is being made final in a future Dart SDK
+    # This is a SDK limitation - we use RegExp subclass for fuzzy search demo
+    deprecated_member_use: ignore
