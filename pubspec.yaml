@@ -1,0 +1,76 @@
+name: mz
+description: A monorepo for MZ Flutter/Dart packages.
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+workspace:
+  - packages/mz_core
+  # Note: mz_lints is excluded from workspace due to analyzer dependency conflicts
+  # with Flutter's test_api. It's managed separately.
+  # - packages/mz_lints
+
+dev_dependencies:
+  melos: ^7.0.0
+
+melos:
+  # Package versioning
+  versioning:
+    # Use independent versioning (each package has its own version)
+    mode: independent
+
+  # Melos scripts for common operations
+  scripts:
+    # Analyze workspace packages
+    analyze:
+      run: melos exec -- dart analyze --fatal-infos
+      description: Run dart analyze in workspace packages
+
+    # Analyze mz_lints separately (not in workspace)
+    analyze:lints:
+      run: dart analyze --fatal-infos
+      description: Run dart analyze on mz_lints
+      exec:
+        workingDir: packages/mz_lints
+
+    # Format workspace packages
+    format:
+      run: melos exec -- dart format --set-exit-if-changed .
+      description: Check formatting in workspace packages
+
+    format:fix:
+      run: melos exec -- dart format .
+      description: Fix formatting in workspace packages
+
+    # Run tests in workspace packages
+    test:
+      run: melos exec -- flutter test
+      description: Run tests in workspace packages
+
+    # Run tests with coverage
+    test:coverage:
+      run: melos exec -- flutter test --coverage
+      description: Run tests with coverage in workspace packages
+
+    # Run mz_lints tests separately
+    test:lints:
+      run: dart test
+      description: Run tests on mz_lints
+      exec:
+        workingDir: packages/mz_lints
+
+    # Clean workspace packages
+    clean:
+      run: melos exec -- flutter clean
+      description: Clean workspace packages
+
+    # Publish dry-run (check if packages are ready to publish)
+    publish:check:
+      run: melos publish --dry-run
+      description: Check if packages are ready to publish
+
+    # Publish packages
+    publish:
+      run: melos publish --no-dry-run
+      description: Publish all packages to pub.dev

@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "mz_core-v*"
+      - "mz_lints-v*"
+
+jobs:
+  publish:
+    name: Publish to pub.dev
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for authentication to pub.dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"
+          channel: stable
+          cache: true
+
+      - name: Install Melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap
+        run: melos bootstrap
+
+      - name: Extract package name from tag
+        id: extract
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          PACKAGE_NAME=$(echo $TAG | sed 's/-v.*//')
+          VERSION=$(echo $TAG | sed 's/.*-v//')
+          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing $PACKAGE_NAME version $VERSION"
+
+      - name: Publish ${{ steps.extract.outputs.package_name }}
+        working-directory: packages/${{ steps.extract.outputs.package_name }}
+        run: dart pub publish --force

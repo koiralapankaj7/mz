@@ -1,0 +1,25 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: auto
+
+flag_management:
+  individual_flags:
+    - name: mz_core
+      paths:
+        - packages/mz_core/
+      carryforward: true
+    - name: mz_lints
+      paths:
+        - packages/mz_lints/
+      carryforward: true
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: true

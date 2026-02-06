@@ -1,0 +1,19 @@
+# This file configures the analyzer for the entire monorepo.
+# Individual packages can override these settings if needed.
+#
+# See: https://dart.dev/guides/language/analysis-options
+
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.mocks.dart"
+    - "**/build/**"
+    - "**/.dart_tool/**"
+
+linter:
+  rules:
+    # Add any monorepo-wide lint rules or overrides here
+    public_member_api_docs: false

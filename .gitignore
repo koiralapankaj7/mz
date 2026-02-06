@@ -1,0 +1,64 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VSCode related
+.vscode/
+
+# Flutter/Dart
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+**/build/
+
+# Coverage
+coverage/
+
+# Melos
+.melos/
+
+# Environment
+.env
+.env.*
+
+# Credentials
+*.pem
+*.p12
+*.key
+*.jks
+*.keystore
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Platform specific (examples only)
+**/example/android/
+**/example/ios/
+**/example/linux/
+**/example/macos/
+**/example/windows/
+**/example/web/
+
+# Pubspec lock at package level (use root lockfile)
+# packages/*/pubspec.lock

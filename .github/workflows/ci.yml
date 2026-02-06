@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"
+          channel: stable
+          cache: true
+
+      - name: Install Melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap
+        run: melos bootstrap
+
+      - name: Analyze workspace packages
+        run: melos run analyze
+
+      - name: Check Formatting
+        run: melos run format
+
+  analyze-lints:
+    name: Analyze mz_lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Get dependencies
+        working-directory: packages/mz_lints
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: packages/mz_lints
+        run: dart analyze --fatal-infos
+
+      - name: Check Formatting
+        working-directory: packages/mz_lints
+        run: dart format --set-exit-if-changed .
+
+  test-mz-core:
+    name: Test mz_core
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"
+          channel: stable
+          cache: true
+
+      - name: Install Melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap
+        run: melos bootstrap
+
+      - name: Run Tests with Coverage
+        working-directory: packages/mz_core
+        run: flutter test --coverage
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: packages/mz_core/coverage/lcov.info
+          flags: mz_core
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  test-mz-lints:
+    name: Test mz_lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Get dependencies
+        working-directory: packages/mz_lints
+        run: dart pub get
+
+      - name: Run Tests
+        working-directory: packages/mz_lints
+        run: dart test
