@@ -1146,13 +1146,14 @@ mixin class Controller implements ChangeNotifier {
     BuildContext context, {
     bool listen = true,
   }) {
-    if (!listen) {
+    if (listen) {
       return context
-          .findAncestorStateOfType<_ControllerProviderState<T>>()
-          ?._controller;
+          .dependOnInheritedWidgetOfExactType<_ControllerModel<T>>()
+          ?.controller;
     }
+    // Use getInheritedWidgetOfExactType to avoid creating a dependency
     return context
-        .dependOnInheritedWidgetOfExactType<_ControllerModel<T>>()
+        .getInheritedWidgetOfExactType<_ControllerModel<T>>()
         ?.controller;
   }
 
@@ -1862,17 +1863,26 @@ class _ControllerModel<T extends Controller> extends InheritedWidget {
 /// {@template mz_core.ControllerProvider}
 /// Provides a controller to its descendants via [InheritedWidget].
 ///
-/// Creates and owns the controller's lifecycle. The controller is created
-/// when the provider is inserted and disposed automatically when removed.
+/// This is a simple provider that does NOT manage the controller's lifecycle.
+/// The controller must be created and disposed externally.
+///
+/// This widget is a lightweight [StatelessWidget] since no lifecycle
+/// management is needed.
+///
+/// For automatic lifecycle management (create + dispose), use
+/// [ControllerProvider.autoDispose] instead, which uses a [StatefulWidget]
+/// to properly manage the controller's lifecycle.
 ///
 /// ## Basic Usage
 ///
 /// {@tool snippet}
-/// Provide a controller to the widget tree:
+/// Provide an existing controller to the widget tree:
 ///
 /// ```dart
+/// final myController = MyController();
+///
 /// ControllerProvider<MyController>(
-///   create: (context) => MyController(),
+///   controller: myController,
 ///   child: MyApp(),
 /// );
 /// ```
@@ -1895,15 +1905,28 @@ class _ControllerModel<T extends Controller> extends InheritedWidget {
 /// ```
 /// {@end-tool}
 ///
+/// ## Auto-Dispose Variant
+///
+/// {@tool snippet}
+/// Create and auto-dispose a controller (owns the lifecycle):
+///
+/// ```dart
+/// ControllerProvider.autoDispose<MyController>(
+///   create: (context) => MyController(),
+///   child: MyApp(),
+/// );
+/// ```
+/// {@end-tool}
+///
 /// ## Nested Providers
 ///
 /// {@tool snippet}
 /// Nest providers to inject dependencies:
 ///
 /// ```dart
-/// ControllerProvider<AuthController>(
+/// ControllerProvider.autoDispose<AuthController>(
 ///   create: (_) => AuthController(),
-///   child: ControllerProvider<UserController>(
+///   child: ControllerProvider.autoDispose<UserController>(
 ///     create: (context) => UserController(
 ///       auth: Controller.ofType<AuthController>(context, listen: false),
 ///     ),
@@ -1913,30 +1936,76 @@ class _ControllerModel<T extends Controller> extends InheritedWidget {
 /// ```
 /// {@end-tool}
 /// {@endtemplate}
-class ControllerProvider<T extends Controller> extends StatefulWidget {
-  /// Creates a controller provider.
+class ControllerProvider<T extends Controller> extends StatelessWidget {
+  /// Creates a controller provider that does NOT manage the controller's
+  /// lifecycle.
+  ///
+  /// Use this constructor when you have an externally managed controller
+  /// that should not be disposed when the provider is removed from the tree.
+  ///
+  /// This uses a lightweight [StatelessWidget] since no lifecycle management
+  /// is needed.
   const ControllerProvider({
+    required this.controller,
+    required this.child,
+    super.key,
+  });
+
+  /// Creates a controller provider that manages the controller's lifecycle.
+  ///
+  /// The controller is created when the provider is inserted into the tree
+  /// and disposed automatically when removed.
+  ///
+  /// Use this constructor when you want the provider to own the controller.
+  ///
+  /// This returns a [StatefulWidget] to properly manage the controller's
+  /// lifecycle (creation in initState, disposal in dispose).
+  static Widget autoDispose<T extends Controller>({
+    required T Function(BuildContext context) create,
+    required Widget child,
+    Key? key,
+  }) {
+    return _ControllerProviderAutoDispose<T>(
+      key: key,
+      create: create,
+      child: child,
+    );
+  }
+
+  /// The controller to provide.
+  final T controller;
+
+  /// The widget subtree that will have access to this controller.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ControllerModel<T>(controller: controller, child: child);
+  }
+}
+
+/// Internal StatefulWidget for auto-disposing controller lifecycle management.
+class _ControllerProviderAutoDispose<T extends Controller>
+    extends StatefulWidget {
+  const _ControllerProviderAutoDispose({
     required this.create,
     required this.child,
     super.key,
   });
 
   /// Factory function to create the controller.
-  ///
-  /// Called once when the provider is first inserted into the widget tree.
-  /// The `context` parameter can be used to access ancestor controllers,
-  /// but descendants are not yet available.
   final T Function(BuildContext context) create;
 
   /// The widget subtree that will have access to this controller.
   final Widget child;
 
   @override
-  State<ControllerProvider<T>> createState() => _ControllerProviderState<T>();
+  State<_ControllerProviderAutoDispose<T>> createState() =>
+      _ControllerProviderAutoDisposeState<T>();
 }
 
-class _ControllerProviderState<T extends Controller>
-    extends State<ControllerProvider<T>> {
+class _ControllerProviderAutoDisposeState<T extends Controller>
+    extends State<_ControllerProviderAutoDispose<T>> {
   late T _controller;
 
   @override
@@ -1972,7 +2041,7 @@ class _ControllerProviderState<T extends Controller>
 /// ```dart
 /// ControllerBuilder<CounterController>(
 ///   controller: counterController,
-///   builder: (context, controller) => Text('${controller.count}'),
+///   builder: (context) => Text('${counterController.count}'),
 /// );
 /// ```
 /// {@end-tool}
@@ -1988,7 +2057,7 @@ class _ControllerProviderState<T extends Controller>
 /// ControllerBuilder<FormController>(
 ///   controller: formController,
 ///   filterKey: 'email',  // Only rebuild when 'email' key notifies
-///   builder: (context, controller) => EmailField(controller.email),
+///   builder: (context) => EmailField(formController.email),
 /// );
 /// ```
 /// {@end-tool}
@@ -2000,7 +2069,7 @@ class _ControllerProviderState<T extends Controller>
 /// ControllerBuilder<TableController>(
 ///   controller: tableController,
 ///   filterKey: ['row-5', 'col-10'],  // Rebuild for either key
-///   builder: (context, controller) => CellWidget(controller.getCell(5, 10)),
+///   builder: (context) => CellWidget(tableController.getCell(5, 10)),
 /// );
 /// ```
 /// {@end-tool}
@@ -2016,7 +2085,7 @@ class _ControllerProviderState<T extends Controller>
 /// ControllerBuilder<DataController>(
 ///   controller: dataController,
 ///   predicate: (key, value) => value is int && value > 100,
-///   builder: (context, controller) => HighValueIndicator(),
+///   builder: (context) => HighValueIndicator(),
 /// );
 /// ```
 /// {@end-tool}
@@ -2044,7 +2113,8 @@ class ControllerBuilder<T extends Controller> extends StatefulWidget {
   /// Builder function called to construct the child widget.
   ///
   /// Called initially and after each notification that passes the filter.
-  final Widget Function(BuildContext context, T controller) builder;
+  /// The controller is available via the [controller] property.
+  final WidgetBuilder builder;
 
   /// Optional key to filter notifications.
   ///
@@ -2098,6 +2168,5 @@ class _ControllerBuilderState<T extends Controller>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      widget.builder(context, widget.controller);
+  Widget build(BuildContext context) => widget.builder(context);
 }
