@@ -280,3 +280,4 @@ Debouncer.cancelAll();
 [1.1.0]: https://github.com/koiralapankaj7/mz_core/releases/tag/v1.1.0
 [1.0.0]: https://github.com/koiralapankaj7/mz_core/releases/tag/v1.0.0
 [0.0.1]: https://github.com/koiralapankaj7/mz_core/releases/tag/v0.0.1
+
