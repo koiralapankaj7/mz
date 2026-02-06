@@ -74,6 +74,7 @@ We follow the Conventional Commits specification:
 
 **Scopes:**
 - `mz_core`: Changes to mz_core package
+- `mz_collection`: Changes to mz_collection package
 - `mz_lints`: Changes to mz_lints package
 - `repo`: Changes to repository configuration
 
@@ -92,6 +93,13 @@ We follow the Conventional Commits specification:
 - Maintain 100% test coverage
 - Add documentation comments for all public APIs
 - Include examples in documentation
+
+### mz_collection
+
+- Maintain 100% test coverage
+- Add documentation comments for all public APIs
+- Include examples in documentation
+- Pure Dart package - no Flutter dependencies in main library
 
 ### mz_lints
 
