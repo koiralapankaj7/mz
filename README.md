@@ -7,11 +7,11 @@ A collection of Dart and Flutter packages for building robust applications.
 
 ## Packages
 
-| Package | Version | Description |
-|---------|---------|-------------|
-| [mz_core](packages/mz_core/) | [![pub](https://img.shields.io/pub/v/mz_core.svg)](https://pub.dev/packages/mz_core) | Flutter utilities for state management, logging, collections, and rate limiting |
-| [mz_collection](packages/mz_collection/) | [![pub](https://img.shields.io/pub/v/mz_collection.svg)](https://pub.dev/packages/mz_collection) | Pure Dart collection state management with filtering, sorting, grouping, and more |
-| [mz_lints](packages/mz_lints/) | [![pub](https://img.shields.io/pub/v/mz_lints.svg)](https://pub.dev/packages/mz_lints) | Custom Dart lint rules for Flutter apps |
+| Package | Version | Coverage | Description |
+|---------|---------|----------|-------------|
+| [mz_core](packages/mz_core/) | [![pub](https://img.shields.io/pub/v/mz_core.svg)](https://pub.dev/packages/mz_core) | [![codecov](https://codecov.io/gh/koiralapankaj7/mz/branch/main/graph/badge.svg?flag=mz_core)](https://codecov.io/gh/koiralapankaj7/mz) | Flutter utilities for state management, logging, collections, and rate limiting |
+| [mz_collection](packages/mz_collection/) | [![pub](https://img.shields.io/pub/v/mz_collection.svg)](https://pub.dev/packages/mz_collection) | [![codecov](https://codecov.io/gh/koiralapankaj7/mz/branch/main/graph/badge.svg?flag=mz_collection)](https://codecov.io/gh/koiralapankaj7/mz) | Pure Dart collection state management with filtering, sorting, grouping, and more |
+| [mz_lints](packages/mz_lints/) | [![pub](https://img.shields.io/pub/v/mz_lints.svg)](https://pub.dev/packages/mz_lints) | - | Custom Dart lint rules for Flutter apps |
 
 ## Quick Start
 
