@@ -1,87 +1,122 @@
 # MZ Packages
 
-A monorepo containing production-ready Flutter and Dart packages.
+A collection of Dart and Flutter packages for building robust applications.
 
-[![CI](https://github.com/koiralapankaj7/mz/workflows/CI/badge.svg)](https://github.com/koiralapankaj7/mz/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/koiralapankaj7/mz/actions/workflows/ci.yml/badge.svg)](https://github.com/koiralapankaj7/mz/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## Packages
 
-| Package | Description | pub.dev |
-|---------|-------------|---------|
-| [mz_core](packages/mz_core) | Flutter utilities for state management, logging, collections, and rate limiting | [![pub package](https://img.shields.io/pub/v/mz_core.svg)](https://pub.dev/packages/mz_core) |
-| [mz_collection](packages/mz_collection) | Pure Dart collection state management with filtering, sorting, grouping, and more | [![pub package](https://img.shields.io/pub/v/mz_collection.svg)](https://pub.dev/packages/mz_collection) |
-| [mz_lints](packages/mz_lints) | Custom Dart lint rules for Flutter apps | [![pub package](https://img.shields.io/pub/v/mz_lints.svg)](https://pub.dev/packages/mz_lints) |
+| Package | Version | Description |
+|---------|---------|-------------|
+| [mz_core](packages/mz_core/) | [![pub](https://img.shields.io/pub/v/mz_core.svg)](https://pub.dev/packages/mz_core) | Flutter utilities for state management, logging, collections, and rate limiting |
+| [mz_collection](packages/mz_collection/) | [![pub](https://img.shields.io/pub/v/mz_collection.svg)](https://pub.dev/packages/mz_collection) | Pure Dart collection state management with filtering, sorting, grouping, and more |
+| [mz_lints](packages/mz_lints/) | [![pub](https://img.shields.io/pub/v/mz_lints.svg)](https://pub.dev/packages/mz_lints) | Custom Dart lint rules for Flutter apps |
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
+### mz_core
 
-- [Flutter](https://flutter.dev/docs/get-started/install) >= 3.22.0
-- [Dart](https://dart.dev/get-dart) >= 3.5.0
-- [Melos](https://melos.invertase.dev/) >= 7.0.0
+```yaml
+dependencies:
+  mz_core: ^1.3.2
+```
+
+```dart
+import 'package:mz_core/mz_core.dart';
+
+// State management with auto-disposal
+final controller = StateController<int>(0);
+controller.addListener(() => print(controller.state));
+controller.state = 42;
+
+// Logging
+final logger = SimpleLogger('MyApp');
+logger.info('Application started');
+```
+
+### mz_collection
+
+```yaml
+dependencies:
+  mz_collection: ^0.0.1
+```
+
+```dart
+import 'package:mz_collection/mz_collection.dart';
+
+// Collection management with filtering, sorting, and more
+final collection = ListController<User>(users);
+collection.filter((user) => user.isActive);
+collection.sort((a, b) => a.name.compareTo(b.name));
+```
+
+### mz_lints
+
+```yaml
+dev_dependencies:
+  mz_lints: ^0.1.0
+```
+
+```yaml
+# analysis_options.yaml
+analyzer:
+  plugins:
+    - mz_lints
+```
+
+## Development
+
+This repository uses [Melos](https://melos.invertase.dev/) for managing the monorepo.
 
 ### Setup
 
-1. **Install Melos globally:**
+```bash
+# Install Melos
+dart pub global activate melos
 
-   ```bash
-   dart pub global activate melos
-   ```
+# Bootstrap the workspace
+melos bootstrap
+```
 
-2. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/koiralapankaj7/mz.git
-   cd mz
-   ```
-
-3. **Bootstrap the workspace:**
-
-   ```bash
-   melos bootstrap
-   ```
-
-   This installs dependencies for all packages and links local packages together.
-
-## Common Commands
-
-| Command | Description |
-|---------|-------------|
-| `melos bootstrap` | Install dependencies and link packages |
-| `melos run analyze` | Run static analysis on all packages |
-| `melos run format` | Check formatting in all packages |
-| `melos run format:fix` | Fix formatting in all packages |
-| `melos run test` | Run tests in all packages |
-| `melos run test:coverage` | Run tests with coverage |
-| `melos run clean` | Clean all packages |
-| `melos run publish:check` | Dry-run publish check |
-| `melos run publish` | Publish packages to pub.dev |
-
-## Development Workflow
-
-### Working on a package
-
-1. Make changes in `packages/<package_name>/`
-2. Run tests: `melos run test`
-3. Check analysis: `melos run analyze`
-4. Commit with [Conventional Commits](https://www.conventionalcommits.org/)
-
-### Versioning and Publishing
-
-This monorepo uses **independent versioning** - each package has its own version.
+### Common Commands
 
 ```bash
-# Check what would be published
-melos run publish:check
+# Run analysis on all packages
+melos run analyze
 
-# Publish all changed packages
-melos run publish
+# Run tests on all packages
+melos run test
+
+# Format all packages
+melos run format
+```
+
+### Package-Specific Commands
+
+For packages not in the Dart workspace (mz_collection, mz_lints):
+
+```bash
+# mz_collection
+cd packages/mz_collection
+dart pub get
+dart test
+
+# mz_lints
+cd packages/mz_lints
+dart pub get
+dart test
 ```
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) before submitting a PR.
+Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feat/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feat/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
