@@ -38,6 +38,9 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Publishing $PACKAGE_NAME version $VERSION"
 
+      - name: Setup Dart for pub.dev authentication
+        uses: dart-lang/setup-dart@v1
+
       - name: Publish ${{ steps.extract.outputs.package_name }}
         working-directory: packages/${{ steps.extract.outputs.package_name }}
         run: dart pub publish --force
