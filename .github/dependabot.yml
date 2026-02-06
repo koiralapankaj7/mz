@@ -4,8 +4,7 @@ updates:
   - package-ecosystem: "pub"
     directory: "/packages/mz_core"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
@@ -19,8 +18,7 @@ updates:
   - package-ecosystem: "pub"
     directory: "/packages/mz_core/example"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 3
     labels:
       - "dependencies"
@@ -35,8 +33,7 @@ updates:
   - package-ecosystem: "pub"
     directory: "/packages/mz_collection"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
@@ -50,8 +47,7 @@ updates:
   - package-ecosystem: "pub"
     directory: "/packages/mz_lints"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
@@ -65,8 +61,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     labels:
       - "ci/cd"
