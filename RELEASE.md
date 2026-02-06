@@ -272,7 +272,7 @@ Follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
 
 For pre-release versions, use:
 
-```
+```text
 1.0.0-alpha.1
 1.0.0-beta.1
 1.0.0-rc.1
@@ -302,6 +302,7 @@ The automated release workflow (`.github/workflows/release.yml`) handles:
 3. Publishing to pub.dev (when configured)
 
 It is triggered by tags matching:
+
 - `mz_core-v*`
 - `mz_collection-v*`
 - `mz_lints-v*`
@@ -311,18 +312,21 @@ It is triggered by tags matching:
 If a release needs to be rolled back:
 
 1. **Retract from pub.dev** (if published):
+
    ```bash
    cd packages/<package>
    dart pub retract <version>
    ```
 
 2. **Delete the tag**:
+
    ```bash
    git tag -d <package>-v<version>
    git push origin :refs/tags/<package>-v<version>
    ```
 
 3. **Revert the commit** (if needed):
+
    ```bash
    git revert <commit-hash>
    git push origin main

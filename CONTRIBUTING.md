@@ -28,6 +28,7 @@ Thank you for your interest in contributing to the MZ packages!
 ### Making Changes
 
 1. Create a new branch:
+
    ```bash
    git checkout -b feature/my-feature
    ```
@@ -35,17 +36,20 @@ Thank you for your interest in contributing to the MZ packages!
 2. Make your changes in the relevant package under `packages/`
 
 3. Run tests:
+
    ```bash
    melos run test
    ```
 
 4. Check formatting and analysis:
+
    ```bash
    melos run format
    melos run analyze
    ```
 
 5. Commit using [Conventional Commits](https://www.conventionalcommits.org/):
+
    ```bash
    git commit -m "feat(mz_core): add new feature"
    git commit -m "fix(mz_lints): fix rule detection"
@@ -55,7 +59,7 @@ Thank you for your interest in contributing to the MZ packages!
 
 We follow the Conventional Commits specification:
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -64,6 +68,7 @@ We follow the Conventional Commits specification:
 ```
 
 **Types:**
+
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation changes
@@ -73,6 +78,7 @@ We follow the Conventional Commits specification:
 - `chore`: Maintenance tasks
 
 **Scopes:**
+
 - `mz_core`: Changes to mz_core package
 - `mz_collection`: Changes to mz_collection package
 - `mz_lints`: Changes to mz_lints package
