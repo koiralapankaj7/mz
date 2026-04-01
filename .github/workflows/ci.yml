@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0  # Required for paths-filter to compare commits
 
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           # For push events, compare with the previous commit
